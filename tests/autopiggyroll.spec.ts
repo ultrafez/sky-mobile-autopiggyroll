@@ -1,9 +1,5 @@
 import { test, expect } from "@playwright/test";
 
-// test("logs in", async ({ page }) => {
-//     await page.goto("https://www.sky.com/hub/mobile/piggybank");
-// });
-
 async function login(page, username, password) {
     await page.goto(
         "https://www.sky.com/signin?area=mysky&successUrl=https%3A%2F%2Fwww.sky.com%2Fhub%2Fmobile%2Fpiggybank"
@@ -14,13 +10,6 @@ async function login(page, username, password) {
         .contentFrame()
         .getByLabel("Accept all")
         .click();
-    // await page
-    //     .locator(
-    //         'iframe[name^="__zoid__sign_in_iframe__"]'
-    //     )
-    //     .contentFrame()
-    //     .getByTestId("AUTHN__INPUT")
-    //     .click();
     await page
         .locator('iframe[name^="__zoid__sign_in_iframe__"]')
         .contentFrame()
@@ -31,20 +20,6 @@ async function login(page, username, password) {
         .contentFrame()
         .getByTestId("AUTHN__INPUT")
         .press("Enter");
-    // await page
-    //   .locator(
-    //     'iframe[name^="__zoid__sign_in_iframe__"]'
-    //   )
-    //   .contentFrame()
-    //   .getByTestId("PASSWORD__INPUT")
-    //   .fill("");
-    // await page
-    //   .locator(
-    //     'iframe[name^="__zoid__sign_in_iframe__"]'
-    //   )
-    //   .contentFrame()
-    //   .getByTestId("PASSWORD__INPUT")
-    //   .click();
     await page
         .locator('iframe[name^="__zoid__sign_in_iframe__"]')
         .contentFrame()
@@ -68,14 +43,6 @@ async function rollBySim(page, simName, numGb) {
     for (let i = 2; i <= numGb; i++) {
         await page.getByLabel(`Increase to ${i} GB`).click();
     }
-    // await page.getByLabel("Increase to 2 GB").click();
-    // await page.getByLabel("Increase to 3 GB").click();
-    // await page.getByLabel("Increase to 4 GB").click();
-    // await page.getByLabel("Increase to 5 GB").click();
-    // await page.getByLabel("Decrease to 4 GB").click();
-    // await page.getByLabel("Decrease to 3 GB").click();
-    // await page.getByLabel("Decrease to 2 GB").click();
-    // await page.getByLabel("Decrease to 1 GB").click();
     await page.locator('[data-test-id="roll-data-button"]').click();
     await page.getByLabel("Roll more data").click();
 }
