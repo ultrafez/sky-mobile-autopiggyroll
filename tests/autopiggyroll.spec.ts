@@ -77,27 +77,14 @@ async function getDataBalanceForAllSims(page): Promise<SimSummary[]> {
     return simsDataRemaining;
 }
 
-// test("roll data to one SIM", async ({ page }) => {
-//     const skyUsername = process.env.USERNAME;
-//     const skyPassword = process.env.PASSWORD;
-//     const simName = process.env.SIMNAME;
-//     const rollGigabytes = parseInt(process.env.NUMGBTOROLL ?? "1", 10);
-
-//     if (rollGigabytes < 1 || rollGigabytes > 5) {
-//         console.log("Invalid number of gigabytes to roll");
-//         expect(true).toBe(false);
-//         return;
-//     }
-
-//     await login(page, skyUsername, skyPassword);
-//     await rollBySim(page, simName, rollGigabytes);
-// });
-
 test("roll data for all low SIMs", async ({ page }) => {
     const skyUsername = process.env.USERNAME;
     const skyPassword = process.env.PASSWORD;
-    const simName = process.env.SIMNAME;
-    const rollGigabytes = parseInt(process.env.NUMGBTOROLL ?? "1", 10);
+    const rollGigabytes = parseInt(process.env.GB_TO_ROLL ?? "1", 10);
+    const minGbBeforeRolling = parseInt(
+        process.env.MIN_GB_BEFORE_ROLLING ?? "1",
+        10
+    );
 
     if (rollGigabytes < 1 || rollGigabytes > 5) {
         console.log("Invalid number of gigabytes to roll");
@@ -108,10 +95,13 @@ test("roll data for all low SIMs", async ({ page }) => {
     await login(page, skyUsername, skyPassword);
     const sims = await getDataBalanceForAllSims(page);
 
+    // Get on the rolling page
+    await page.goto("https://www.sky.com/hub/mobile/piggybank");
+
     for (let i = 0; i < sims.length; i++) {
         const sim = sims[i];
         const simOptionName = `${sim.name} (${sim.number})`;
-        if (sim.remainingGb < 2) {
+        if (sim.remainingGb < minGbBeforeRolling) {
             console.log(
                 "Rolling data for " +
                     simOptionName +
