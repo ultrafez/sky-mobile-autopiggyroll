@@ -1,4 +1,6 @@
 FROM mcr.microsoft.com/playwright:v1.47.2-noble
+LABEL org.opencontainers.image.source=https://github.com/ultrafez/sky-mobile-autopiggyroll
+LABEL org.opencontainers.image.authors="Alex Silcock <alex@alexsilcock.net>"
 
 WORKDIR /code
 

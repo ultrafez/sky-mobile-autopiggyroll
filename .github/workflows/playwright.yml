@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Run AutoPiggyRoll Playwright
 jobs:
   test:
     timeout-minutes: 60
