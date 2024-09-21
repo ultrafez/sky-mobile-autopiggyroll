@@ -47,7 +47,53 @@ async function rollBySim(page, simName, numGb) {
     await page.getByLabel("Roll more data").click();
 }
 
-test("test", async ({ page }) => {
+type SimSummary = { name: string; number: string; remainingGb: number };
+async function getDataBalanceForAllSims(page): Promise<SimSummary[]> {
+    await page.goto("https://www.sky.com/productsettings/mobile");
+    const simsDataRemaining = await page
+        .locator('[data-test-id="sim-tile-container"]')
+        .evaluateAll((sims) => {
+            const returnSims = sims.map((simContainer) => {
+                const nameEl = simContainer.querySelector(
+                    '[data-test-id^="sim-card-heading-"]'
+                );
+                const name = nameEl ? nameEl.innerText : null;
+                const numberEl = simContainer.querySelector(
+                    '[data-test-id="text-sim-tile-body"] > div > p'
+                );
+                const number = numberEl ? numberEl.innerText : null;
+                const remainingEl = simContainer.querySelector(
+                    '[data-test-id^="data-usage-amount-sim-"]'
+                );
+                const remaining = remainingEl ? remainingEl.innerHTML : null;
+                const remainingGb = remaining.endsWith("GB")
+                    ? parseFloat(remaining.slice(0, -2))
+                    : null;
+                return { name, number, remainingGb };
+            });
+            return returnSims;
+        });
+
+    return simsDataRemaining;
+}
+
+// test("roll data to one SIM", async ({ page }) => {
+//     const skyUsername = process.env.USERNAME;
+//     const skyPassword = process.env.PASSWORD;
+//     const simName = process.env.SIMNAME;
+//     const rollGigabytes = parseInt(process.env.NUMGBTOROLL ?? "1", 10);
+
+//     if (rollGigabytes < 1 || rollGigabytes > 5) {
+//         console.log("Invalid number of gigabytes to roll");
+//         expect(true).toBe(false);
+//         return;
+//     }
+
+//     await login(page, skyUsername, skyPassword);
+//     await rollBySim(page, simName, rollGigabytes);
+// });
+
+test("roll data for all low SIMs", async ({ page }) => {
     const skyUsername = process.env.USERNAME;
     const skyPassword = process.env.PASSWORD;
     const simName = process.env.SIMNAME;
@@ -60,5 +106,26 @@ test("test", async ({ page }) => {
     }
 
     await login(page, skyUsername, skyPassword);
-    await rollBySim(page, simName, rollGigabytes);
+    const sims = await getDataBalanceForAllSims(page);
+
+    for (let i = 0; i < sims.length; i++) {
+        const sim = sims[i];
+        const simOptionName = `${sim.name} (${sim.number})`;
+        if (sim.remainingGb < 2) {
+            console.log(
+                "Rolling data for " +
+                    simOptionName +
+                    " as balance is " +
+                    sim.remainingGb
+            );
+            await rollBySim(page, simOptionName, rollGigabytes);
+        } else {
+            console.log(
+                "Not rolling for " +
+                    simOptionName +
+                    " as balance is " +
+                    sim.remainingGb
+            );
+        }
+    }
 });
