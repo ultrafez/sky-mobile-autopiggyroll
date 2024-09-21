@@ -4,8 +4,6 @@ Automatically roll data back from your Sky Mobile Piggybank to your SIM cards wh
 
 ## Setup
 
-Using Node 20 (may work on other versions, untested) - `npm install`
-
 Copy `.env.example` to `.env` and set configuration values:
 
 * `USERNAME` - Your Sky username
@@ -14,6 +12,8 @@ Copy `.env.example` to `.env` and set configuration values:
 * `MIN_GB_BEFORE_ROLLING` - The minimum amount of data a SIM card must have remaining before rolling
 
 ## Usage with Node
+
+Using Node 20 (may work on other versions, untested) - `npm install`
 
 Configuration values from `.env` are used when running.
 
