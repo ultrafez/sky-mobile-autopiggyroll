@@ -60,8 +60,7 @@ async function login(page, username, password) {
     await expect(page).toHaveTitle(/My Account/);
 }
 
-type RolloverGigabytes = 1 | 2 | 3 | 4 | 5;
-async function rollBySim(page, simName, numGb: RolloverGigabytes) {
+async function rollBySim(page, simName, numGb) {
     await page
         .locator('[data-test-id="toolkit-select-input-dropdown"]')
         .selectOption({ label: simName });
@@ -82,9 +81,17 @@ async function rollBySim(page, simName, numGb: RolloverGigabytes) {
 }
 
 test("test", async ({ page }) => {
-    const USERNAME = "placeholder";
-    const PASSWORD = "";
+    const skyUsername = process.env.USERNAME;
+    const skyPassword = process.env.PASSWORD;
+    const simName = process.env.SIMNAME;
+    const rollGigabytes = parseInt(process.env.NUMGBTOROLL ?? "1", 10);
 
-    await login(page, USERNAME, PASSWORD);
-    await rollBySim(page, "Me (07XXXXXXXXXXXXXX)", 1);
+    if (rollGigabytes < 1 || rollGigabytes > 5) {
+        console.log("Invalid number of gigabytes to roll");
+        expect(true).toBe(false);
+        return;
+    }
+
+    await login(page, skyUsername, skyPassword);
+    await rollBySim(page, simName, rollGigabytes);
 });
