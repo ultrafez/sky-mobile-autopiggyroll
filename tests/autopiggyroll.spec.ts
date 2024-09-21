@@ -86,6 +86,10 @@ test("roll data for all low SIMs", async ({ page }) => {
         10
     );
 
+    console.log("Starting with config:");
+    console.log("  Threshold before rolling: " + minGbBeforeRolling + " GB");
+    console.log("  Amount of data to roll: " + rollGigabytes + " GB");
+
     if (rollGigabytes < 1 || rollGigabytes > 5) {
         console.log("Invalid number of gigabytes to roll");
         expect(true).toBe(false);
